@@ -102,3 +102,7 @@ instance DataOptions SeriesLine where
 
 instance DataOptions SeriesPie where
   type DataOptions_name SeriesPie = Maybe Text
+
+instance DataOptions SeriesBar where
+  type DataOptions_name SeriesBar = Maybe Int
+  type DataOptions_value SeriesBar = Maybe (Int, Double)
