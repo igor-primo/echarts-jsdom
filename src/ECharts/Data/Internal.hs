@@ -104,5 +104,9 @@ instance DataOptions SeriesPie where
   type DataOptions_name SeriesPie = Maybe Text
 
 instance DataOptions SeriesBar where
-  type DataOptions_name SeriesBar = Maybe Int
-  type DataOptions_value SeriesBar = Maybe (Int, Double)
+  type DataOptions_name SeriesBar = Maybe Text
+  type DataOptions_value SeriesBar = Maybe (Text, Double)
+
+instance DataOptions SeriesScatter where
+  type DataOptions_name SeriesScatter = Maybe Double
+  type DataOptions_value SeriesScatter = Maybe (Double, Double)

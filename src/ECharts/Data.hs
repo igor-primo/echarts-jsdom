@@ -12,6 +12,7 @@
 module ECharts.Data
   where
 
+import Language.Javascript.JSaddle
 import qualified Language.Javascript.JSaddle.Object as OI (Object(..), create, setProp, getProp)
 import Data.Aeson (ToJSON, genericToEncoding, genericToJSON, defaultOptions, Options(..))
 import Data.Default (Default, def)
@@ -48,44 +49,36 @@ instance Default (Data SeriesLine) where
 instance Default (Data SeriesBar) where
   def = DataObject def def
 
+instance Default (Data SeriesScatter) where
+  def = DataObject def def
+
+defToJSVal :: ( ToJSVal (DataOptions_name a)
+              , ToJSVal (DataOptions_value a)
+              )
+           => Data a -> JSM JSVal
+defToJSVal = \case
+  (DataInt a) -> toJSVal a
+  (DataDouble a) -> toJSVal a
+  (DataText a) -> toJSVal a
+  (DataObject a b) -> do
+    o <- OI.create
+    aO <- toJSVal a
+    bO <- toJSVal b
+    OI.setProp "name" aO o
+    OI.setProp "value" bO o
+    toJSVal o
+
 instance ToJSVal (Data SeriesPie) where
-  toJSVal = \case
-    (DataInt a) -> toJSVal a
-    (DataDouble a) -> toJSVal a
-    (DataText a) -> toJSVal a
-    (DataObject a b) -> do
-      o <- OI.create
-      aO <- toJSVal a
-      bO <- toJSVal b
-      OI.setProp "name" aO o
-      OI.setProp "value" bO o
-      toJSVal o
+  toJSVal = defToJSVal
 
 instance ToJSVal (Data SeriesLine) where
-  toJSVal = \case
-    (DataInt a) -> toJSVal a
-    (DataDouble a) -> toJSVal a
-    (DataText a) -> toJSVal a
-    (DataObject a b) -> do
-      o <- OI.create
-      aO <- toJSVal a
-      bO <- toJSVal b
-      OI.setProp "name" aO o
-      OI.setProp "value" bO o
-      toJSVal o
+  toJSVal = defToJSVal
 
 instance ToJSVal (Data SeriesBar) where
-  toJSVal = \case
-    (DataInt a) -> toJSVal a
-    (DataDouble a) -> toJSVal a
-    (DataText a) -> toJSVal a
-    (DataObject a b) -> do
-      o <- OI.create
-      aO <- toJSVal a
-      bO <- toJSVal b
-      OI.setProp "name" aO o
-      OI.setProp "value" bO o
-      toJSVal o
+  toJSVal = defToJSVal
+
+instance ToJSVal (Data SeriesScatter) where
+  toJSVal = defToJSVal
 
 instance ToJSON (Data SeriesLine) where
   toJSON = genericToJSON $ defaultOptions
@@ -102,6 +95,18 @@ instance ToJSON (Data SeriesLine) where
 instance ToJSON (Data SeriesPie) where
 
 instance ToJSON (Data SeriesBar) where
+  toJSON = genericToJSON $ defaultOptions
+    { fieldLabelModifier = drop $ T.length "_data_"
+    , omitNothingFields = True
+    , sumEncoding = Aeson.UntaggedValue
+    }
+  toEncoding = genericToEncoding $ defaultOptions
+    { fieldLabelModifier = drop $ T.length "_data_"
+    , omitNothingFields = True
+    , sumEncoding = Aeson.UntaggedValue
+    }
+
+instance ToJSON (Data SeriesScatter) where
   toJSON = genericToJSON $ defaultOptions
     { fieldLabelModifier = drop $ T.length "_data_"
     , omitNothingFields = True

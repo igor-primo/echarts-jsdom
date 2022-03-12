@@ -25,16 +25,19 @@ data SeriesT s where
   SeriesT_Line :: Series SeriesLine -> SeriesT SeriesLine
   SeriesT_Pie :: Series SeriesPie -> SeriesT SeriesPie
   SeriesT_Bar :: Series SeriesBar -> SeriesT SeriesBar
+  SeriesT_Scatter :: Series SeriesScatter -> SeriesT SeriesScatter
 
 getSeries :: SeriesT s -> Series s
 getSeries (SeriesT_Line s) = s
 getSeries (SeriesT_Pie s) = s
 getSeries (SeriesT_Bar s) = s
+getSeries (SeriesT_Scatter s) = s
 
 getSeriesType :: forall s . SeriesT s -> Text
 getSeriesType (SeriesT_Line _) = getSeriesTypeInt (Proxy :: Proxy s)
 getSeriesType (SeriesT_Pie _) = getSeriesTypeInt (Proxy :: Proxy s)
 getSeriesType (SeriesT_Bar _) = getSeriesTypeInt (Proxy :: Proxy s)
+getSeriesType (SeriesT_Scatter _) = getSeriesTypeInt (Proxy :: Proxy s)
 
 data Series seriesType = Series
   -- Common options
@@ -196,5 +199,6 @@ data Series seriesType = Series
 
 instance Default (Series SeriesLine) where
 instance Default (Series SeriesBar) where
+instance Default (Series SeriesScatter) where
 
 makeLenses ''Series
