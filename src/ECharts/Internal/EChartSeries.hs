@@ -525,6 +525,7 @@ series_datasetIndex_toJSVal = \case
 series_data_toJSVal :: SeriesT s -> JSM (Maybe JSVal)
 series_data_toJSVal = \case
   (SeriesT_Line s) -> mapM toJSVal $ s ^? series_data . _Just
+  (SeriesT_Bar s) -> mapM toJSVal $ s ^? series_data . _Just
   _ -> return Nothing
 
 series_markPoint_toJSVal :: SeriesT s -> JSM (Maybe JSVal)
